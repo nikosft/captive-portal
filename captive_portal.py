@@ -87,7 +87,7 @@ class CaptivePortal(BaseHTTPServer.BaseHTTPRequestHandler):
 print "*********************************************"
 print "* Note, if there are already iptables rules *"
 print "* this script may not work. Flush iptables  *"
-print "* at your own riks using iptables -F        *"
+print "* at your own risk using iptables -F        *"
 print "*********************************************"
 print "Updating iptables"
 print ".. Allow TCP DNS"
