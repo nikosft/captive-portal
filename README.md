@@ -1,7 +1,7 @@
 # A captive portal that uses IPTABLES
 
 ## Introduction
-This is a very simple cpative portal that uses IPTABLES and python's BaseHTTPServer.
+This is a very simple captive portal that uses IPTABLES and python's BaseHTTPServer.
 When it is executed it blocks all traffic except DNS and redirects all HTTP
 traffic to a login page. When a user enters the correct credentials a new 
 IPTABLES entry is added and all the traffic originating from the IP address
