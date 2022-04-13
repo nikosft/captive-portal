@@ -5,8 +5,8 @@ import cgi
 
 # These variables are used as settings
 PORT       = 9090         # the port in which the captive portal web server listens 
-IFACE      = "wlan2"      # the interface that captive portal protects
-IP_ADDRESS = "172.16.0.1" # the ip address of the captive portal (it can be the IP of IFACE) 
+IFACE      = "wlan0"      # the interface that captive portal protects
+IP_ADDRESS = "10.3.141.1" # the ip address of the captive portal (it can be the IP of IFACE) 
 
 '''
 This it the http server used by the the captive portal
@@ -70,8 +70,8 @@ class CaptivePortal(BaseHTTPServer.BaseHTTPRequestHandler):
         if username == 'nikos' and password == 'fotiou':
             #authorized user
             remote_IP = self.client_address[0]
-            print 'New authorization from '+ remote_IP
-            print 'Updating IP tables'
+            print('New authorization from '+ remote_IP)
+            print('Updating IP tables')
             subprocess.call(["iptables","-t", "nat", "-I", "PREROUTING","1", "-s", remote_IP, "-j" ,"ACCEPT"])
             subprocess.call(["iptables", "-I", "FORWARD", "-s", remote_IP, "-j" ,"ACCEPT"])
             self.wfile.write("You are now authorized. Navigate to any URL")
@@ -84,23 +84,23 @@ class CaptivePortal(BaseHTTPServer.BaseHTTPRequestHandler):
     #def log_message(self, format, *args):
     #    return
 
-print "*********************************************"
-print "* Note, if there are already iptables rules *"
-print "* this script may not work. Flush iptables  *"
-print "* at your own risk using iptables -F        *"
-print "*********************************************"
-print "Updating iptables"
-print ".. Allow TCP DNS"
+print("*********************************************")
+print("* Note, if there are already iptables rules *")
+print("* this script may not work. Flush iptables  *")
+print("* at your own risk using iptables -F        *")
+print("*********************************************")
+print("Updating iptables")
+print(".. Allow TCP DNS")
 subprocess.call(["iptables", "-A", "FORWARD", "-i", IFACE, "-p", "tcp", "--dport", "53", "-j" ,"ACCEPT"])
-print ".. Allow UDP DNS"
+print(".. Allow UDP DNS")
 subprocess.call(["iptables", "-A", "FORWARD", "-i", IFACE, "-p", "udp", "--dport", "53", "-j" ,"ACCEPT"])
-print ".. Allow traffic to captive portal"
+print(".. Allow traffic to captive portal")
 subprocess.call(["iptables", "-A", "FORWARD", "-i", IFACE, "-p", "tcp", "--dport", str(PORT),"-d", IP_ADDRESS, "-j" ,"ACCEPT"])
-print ".. Block all other traffic"
+print(".. Block all other traffic")
 subprocess.call(["iptables", "-A", "FORWARD", "-i", IFACE, "-j" ,"DROP"])
-print "Starting web server"
+print("Starting web server")
 httpd = BaseHTTPServer.HTTPServer(('', PORT), CaptivePortal)
-print "Redirecting HTTP traffic to captive portal"
+print("Redirecting HTTP traffic to captive portal")
 subprocess.call(["iptables", "-t", "nat", "-A", "PREROUTING", "-i", IFACE, "-p", "tcp", "--dport", "80", "-j" ,"DNAT", "--to-destination", IP_ADDRESS+":"+str(PORT)])
 
 try:
